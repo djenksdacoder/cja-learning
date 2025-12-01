@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CJA Launch Kit + AA to CJA Migration | Publicis Sapient</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;max-width:1200px;margin:40px auto;padding:20px;background:#F5F5F5;color:#000;line-height:1.6}
+    .logo{text-align:center;margin:20px 0 30px}
+    .logo img{max-width:280px;height:auto}
+    h1{color:#000;text-align:center;font-size:2.2em;margin:20px 0;border-bottom:4px solid #D71A21;padding-bottom:12px}
+    h2{color:#000;border-bottom:2px solid #D71A21;padding-bottom:10px;margin-top:35px}
+    .tab{overflow:hidden;background:#FFF;border:1px solid #333;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+    .tab button{background:#FFF;float:left;border:none;outline:none;cursor:pointer;padding:14px 20px;font-size:16px;color:#333;border-right:1px solid #333;transition:all .3s}
+    .tab button:hover{background:#D71A21;color:#FFF}
+    .tab button.active{background:#D71A21;color:#FFF}
+    .tab button:last-child{border-right:none}
+    .tabcontent{display:none;padding:25px;background:white;border:1px solid #333;border-top:none;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+    label{display:block;margin:15px 0 6px;font-weight:bold;color:#333}
+    input,textarea,select{width:100%;padding:11px;border:1px solid #666;background:#FFF;font-size:15px;box-sizing:border-box}
+    button{background:#D71A21;color:#FFF;padding:14px;border:none;font-weight:bold;cursor:pointer;margin:15px 0;font-size:16px;transition:background .3s}
+    button:hover{background:#B0161C}
+    .download,.copy{background:#000!important}
+    .copy:hover,.download:hover{background:#333!important}
+    pre{background:#000;color:#00FF41;padding:18px;overflow:auto;max-height:600px;border-left:6px solid #D71A21;font-family:Consolas,monospace;font-size:13px}
+    .success{color:#D71A21;font-weight:bold}
+    .tabcontent.active{display:block}
+    footer{text-align:center;margin-top:60px;padding-top:20px;border-top:1px solid #333;color:#666;font-size:14px}
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/PS_Logo_RGB.svg/330px-PS_Logo_RGB.svg.png" alt="Publicis Sapient">
+  </div>
+
+  <h1>CJA Launch Kit + Adobe Analytics to CJA Migration</h1>
+  <p style="text-align:center;color:#333;font-size:1.1em">
+    By David Jenkins · Publicis Sapient · Instant CJA readiness · 100% client-side
+  </p>
+
+  <div class="tab">
+    <button class="tablinks active" onclick="openTab(event,'Migration')">1. AA to CJA Migration</button>
+    <button class="tablinks" onclick="openTab(event,'Schema')">2. Schema Generator</button>
+    <button class="tablinks" onclick="openTab(event,'DataPrep')">3. Data Prep Rules</button>
+    <button class="tablinks" onclick="openTab(event,'Lookup')">4. Lookup Dataset</button>
+    <button class="tablinks" onclick="openTab(event,'DataView')">5. Data View</button>
+    <button class="tablinks" onclick="openTab(event,'Postman')">6. Postman Collection</button>
+    <button class="tablinks download" onclick="downloadAll()">Download All as ZIP</button>
+  </div>
+
+  <div id="Migration" class="tabcontent active">
+    <h2>Adobe Analytics to CJA Automatic Migration</h2>
+    <p>Paste your AA variables (e.g. eVar1 = Customer ID)</p>
+    <textarea id="aaVars" rows="15" placeholder="eVar1 = Customer ID&#10;eVar2 = Page Name&#10;prop1 = Campaign&#10;event10 = Revenue&#10;event1 = Purchases"></textarea>
+    <button onclick="migrateFromAA()">Migrate to CJA to Generate Full Kit</button>
+    <div id="migrationStatus"></div>
+    <pre id="migrationResult"></pre>
+  </div>
+
+  <div id="Schema" class="tabcontent">
+    <h2>Generate CJA-Ready XDM Schema</h2>
+    <label>Schema Type</label><select id="schemaType"><option value="event">ExperienceEvent</option><option value="profile">Profile</option></select>
+    <label>Tenant ID</label><input id="tenantId" value="acme">
+    <label>Schema Name</label><input id="schemaName" value="Loyalty Purchase Event">
+    <label>Load from URL (optional)</label><input id="schemaUrl"><button onclick="loadFromUrl()" style="width:auto;padding:8px 12px">Load</button>
+    <label>Custom JSON Schema</label><textarea id="inputSchema" rows="10">{"type":"object","properties":{"orderId":{"type":"string"},"revenue":{"type":"number"}}}</textarea>
+    <h3>Include Standard Mixins</h3>
+    <label><input type="checkbox" checked id="addIdentity"> Identity</label>
+    <label><input type="checkbox" checked id="addTime"> Timestamp & Event Type</label>
+    <label><input type="checkbox" id="addCommerce"> Commerce</label>
+    <label><input type="checkbox" id="addWeb"> Web</label>
+    <label><input type="checkbox" id="addEnvironment"> Environment</label>
+    <button onclick="generateSchema()">Generate Schema</button>
+    <div id="status"></div>
+    <pre id="schemaOut"></pre>
+  </div>
+
+  <div id="DataPrep" class="tabcontent">
+    <h2>Auto-Generated Data Prep Rules (AEP Ready)</h2>
+    <button onclick="generateDataPrep()">Generate / Refresh Rules</button>
+    <button class="copy" onclick="copyToClipboard('dataprepOut')">Copy to Clipboard</button>
+    <pre id="dataprepOut">// Run AA Migration or Schema Generator first</pre>
+  </div>
+
+  <div id="Lookup" class="tabcontent">
+    <h2>Generate Lookup Dataset</h2>
+    <label>Key Field</label><input id="lookupKey" value="sku">
+    <label>Fields (comma-separated)</label><input id="lookupFields" value="name,price,category">
+    <button onclick="generateLookup()">Generate Schema + Sample CSV</button>
+    <pre id="lookupSchema"></pre>
+    <pre id="lookupCsv" style="margin-top:15px"></pre>
+  </div>
+
+  <div id="DataView" class="tabcontent">
+    <h2>Generate CJA Data View JSON</h2>
+    <button onclick="generateDataView()">Generate Data View</button>
+    <pre id="dataviewOut"></pre>
+  </div>
+
+  <div id="Postman" class="tabcontent">
+    <h2>Generate Postman Collection for Streaming</h2>
+    <button onclick="generatePostman()">Generate Collection</button>
+    <pre id="postmanOut"></pre>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    let finalSchema = {}, migrationOutput = {}, dataprepRules = "";
+
+    function openTab(e,t){
+      document.querySelectorAll('.tabcontent').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.tablinks').forEach(x=>x.classList.remove('active'));
+      document.getElementById(t).classList.add('active');
+      e.currentTarget.classList.add('active');
+    }
+
+    async function loadFromUrl(){
+      const u=document.getElementById('schemaUrl').value.trim();
+      if(!u)return;
+      try{
+        const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`);
+        const j=await r.json();
+        document.getElementById('inputSchema').value=JSON.stringify(j,null,2);
+      }catch(e){alert('Failed to load: '+e.message);}
+    }
+
+    function generateSchema(){
+      const type=document.getElementById('schemaType').value;
+      const tenant=document.getElementById('tenantId').value.trim()||'tenant';
+      const name=document.getElementById('schemaName').value.trim()||'Custom Schema';
+      let schema={};try{schema=JSON.parse(document.getElementById('inputSchema').value)}catch(e){alert('Invalid JSON');return;}
+      const ns=`_${tenant}`;
+      const id=`https://ns.adobe.com/${tenant}/schemas/${crypto.randomUUID()}`;
+      const base={
+        "$id":id,"title":name,"description":"Generated by Publicis Sapient CJA Kit","type":"object",
+        "meta:extends":type==="event"?["https://ns.adobe.com/xdm/context/experienceevent"]:["https://ns.adobe.com/xdm/context/profile"],
+        "allOf":[{"$ref":type==="event"?"https://ns.adobe.com/xdm/context/experienceevent":"https://ns.adobe.com/xdm/context/profile"}],
+        "properties":{"_id":{"type":"string"},[ns]:{"type":"object","properties":{},"meta:xdmType":"object"}}
+      };
+      if(document.getElementById('addIdentity').checked) base.properties.identityMap={"type":"object","meta:xdmType":"map"};
+      if(document.getElementById('addTime').checked){base.properties.timestamp={"type":"string","format":"date-time","meta:xdmType":"date-time"};base.properties.eventType={"type":"string"};}
+      const c=base.properties[ns].properties;
+      Object.entries(schema.properties||{}).forEach(([k,v])=>{
+        c[k]={"title":v.title||k,"type":v.type||"string","meta:xdmType":v.type==="number"?"number":v.type==="integer"?"integer":"string"};
+        if(v.format)c[k].format=v.format;
+      });
+      finalSchema=base;document.getElementById('schemaOut').textContent=JSON.stringify(base,null,2);
+      generateDataPrep();
+    }
+
+    function migrateFromAA(){
+      const i=document.getElementById('aaVars').value.trim();if(!i)return alert('Paste variables');
+      const l=i.split('\n').map(x=>x.trim()).filter(x=>x.includes('='));
+      const t='_tenant',f={},dp=['// Auto-generated Data Prep Rules – Publicis Sapient'],dim=[],met=[];
+      l.forEach(x=>{
+        const [v,d]=x.split('=').map(s=>s.trim());const n=d||v;
+        if(v.match(/^(eVar|prop)\d+/i)){f[v]={"type":"string","title":n};dp.push(`ctx.${t}.${v}=lower(trim(ctx.${v}));`);dim.push({"id":v,"name":n,"path":`${t}.${v}`});}
+        if(v.match(/^event\d+/i)){f[v]={"type":"number","title":n};dp.push(`ctx.${t}.${v}=float(ctx.${v});`);met.push({"id":v,"name":n,"formula":`${t}.${v}`});}
+      });
+      dp.push(`// Default eventType`);dp.push(`if(ctx.${t}.revenue>0) ctx.eventType="commerce.purchases";`);
+      dataprepRules=dp.join('\n');
+      const s={"$id":`https://ns.adobe.com/schemas/aa-migration-${Date.now()}`,"title":"AA to CJA Migrated Schema","meta:extends":["https://ns.adobe.com/xdm/context/experienceevent"],"allOf":[{"$ref":"https://ns.adobe.com/xdm/context/experienceevent"}],"properties":{[t]:{"type":"object","properties":f}}};
+      migrationOutput={schema:JSON.stringify(s,null,2),dataPrep:dataprepRules,dataView:{name:"AA Migration Data View",dimensions:dim,metrics:met}};
+      document.getElementById('migrationResult').textContent=`SCHEMA:\n${migrationOutput.schema}\n\nDATA PREP:\n${dataprepRules}\n\nDATA VIEW:\n${JSON.stringify(migrationOutput.dataView,null,2)}`;
+      document.getElementById('migrationStatus').innerHTML='<span class="success">Migration complete!</span>';
+      generateDataPrep();
+    }
+
+    function generateDataPrep(){
+      document.getElementById('dataprepOut').textContent = dataprepRules || "// Run AA Migration or Schema Generator first";
+    }
+
+    function generateLookup(){
+      const k=document.getElementById('lookupKey').value;
+      const f=document.getElementById('lookupFields').value.split(',').map(x=>x.trim());
+      const s={title:"Product Lookup",properties:{[k]:{type:"string"}}};f.forEach(x=>s.properties[x]={type:"string"});
+      const c=`${[k,...f].join(',')}\nSKU123,Blue Shirt,49.99,Apparel`;
+      document.getElementById('lookupSchema').textContent=JSON.stringify(s,null,2);
+      document.getElementById('lookupCsv').textContent=c;
+    }
+
+    function generateDataView(){
+      document.getElementById('dataviewOut').textContent=JSON.stringify({name:"Sample Data View",dimensions:[{id:"orderId",name:"Order ID",path:"_tenant.orderId"}],metrics:[{id:"rev",name:"Revenue",formula:"sum(_tenant.revenue)"}]},null,2);
+    }
+
+    function generatePostman(){
+      document.getElementById('postmanOut').textContent=JSON.stringify({info:{name:"CJA Streaming Test"},item:[{name:"Send Event",request:{method:"POST",url:"https://dcs.adobedc.net/collection/{{datasetId}}",body:{mode:"raw",raw:JSON.stringify({events:[{_id:"{{$guid}}",timestamp:"{{$isoTimestamp}}",_tenant:{orderId:"TEST123",revenue:99.99}}]},null,2)}}}]},null,2);
+    }
+
+    async function downloadAll(){
+      const zip=new JSZip();
+      zip.file("schema.json",document.getElementById('schemaOut').textContent||migrationOutput.schema||"{}");
+      zip.file("data-prep.txt",dataprepRules||"");
+      zip.file("lookup-schema.json",document.getElementById('lookupSchema').textContent||"{}");
+      zip.file("lookup-sample.csv",document.getElementById('lookupCsv').textContent||"");
+      zip.file("dataview.json",document.getElementById('dataviewOut').textContent||JSON.stringify(migrationOutput.dataView||{},null,2));
+      zip.file("postman.json",document.getElementById('postmanOut').textContent||"{}");
+      const b=await zip.generateAsync({type:"blob"});
+      const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download="Publicis-Sapient-CJA-Kit.zip";a.click();
+    }
+
+    function copyToClipboard(id){
+      navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>alert("Copied to clipboard!"));
+    }
+  </script>
+
+  <footer>
+    © 2025 David Jenkins · Publicis Sapient · david.jenkins@publicissapient.com
+  </footer>
+</body>
+</html>
