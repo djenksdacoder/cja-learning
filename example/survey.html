@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publicis Sapient | Executive CJA Storyboard Kit</title>
+  <style>
+    body {font-family: Arial, Helvetica, sans-serif;max-width: 1200px;margin: 40px auto;padding: 20px;background: #F5F5F5;color: #000000;line-height: 1.6;}
+    .logo {text-align: center;margin: 20px 0 30px;}
+    .logo img {max-width: 240px;height: auto;}
+    h1 {color: #000000;text-align: center;font-size: 2.4em;margin: 20px 0;border-bottom: 4px solid #D71A21;padding-bottom: 12px;}
+    h2 {color: #D71A21;margin-top: 40px;font-size: 1.8em;}
+    .card {background: white;padding: 30px;border-radius: 12px;box-shadow: 0 4px 20px rgba(0,0,0,0.1);}
+    label {display: block;margin: 18px 0 8px;font-weight: bold;font-size: 1.1em;}
+    input, select, textarea {width: 100%;padding: 14px;border: 1px solid #666;border-radius: 6px;font-size: 16px;box-sizing: border-box;}
+    button {background: #D71A21;color: white;padding: 16px 32px;border: none;font-size: 1.2em;font-weight: bold;border-radius: 6px;cursor: pointer;margin-top: 20px;}
+    button:hover {background: #B0161C;}
+    .download {background: #000000 !important;}
+    .download:hover {background: #333333 !important;}
+    .preview {margin-top: 40px;background: #fff;padding: 30px;border-left: 6px solid #D71A21;border-radius: 8px;font-size: 1.1em;line-height: 1.7;}
+    footer {text-align: center;margin-top: 80px;padding-top: 20px;border-top: 1px solid #333;color: #666;font-size: 14px;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/PS_Logo_RGB.svg/330px-PS_Logo_RGB.svg.png" alt="Publicis Sapient">
+  </div>
+
+  <h1>Executive CJA Storyboard Kit<br><span style="font-size:0.7em;color:#333;">Turn Customer Journey Analytics data into a boardroom-ready story in 60 seconds</span></h1>
+
+  <div class="card">
+    <p style="font-size:1.2em;text-align:center;background:#fff3e0;padding:20px;border-radius:8px;">
+      Most executives don’t care about eVars or segments.<br>
+      They care about <strong>growth, conversion, and customer lifetime value</strong>.<br>
+      This tool instantly translates CJA’s power into language your CMO and CFO understand.
+    </p>
+
+    <label>1. Client / Brand Name</label>
+    <input type="text" id="brand" placeholder="e.g. Acme Bank, Luxe Retail" value="Luxe Retail">
+
+    <label>2. Primary Business Goal (what matters most right now)</label>
+    <select id="goal">
+      <option>Increase online revenue</option>
+      <option>Improve customer retention & LTV</option>
+      <option>Grow subscription / membership sign-ups</option>
+      <option>Reduce cart / application abandonment</option>
+      <option>Optimize marketing spend & ROAS</option>
+    </select>
+
+    <label>3. Hero Metric you want to move (we’ll feature it on every slide)</label>
+    <select id="kpi">
+      <option>Revenue</option>
+      <option>Conversion Rate</option>
+      <option>Average Order Value</option>
+      <option>Customer Lifetime Value</option>
+      <option>Subscription Starts</option>
+      <option>Marketing ROAS</option>
+    </select>
+
+    <label>4. Time period we’re showing (makes the story feel current)</label>
+    <select id="period">
+      <option>Last 90 days</option>
+      <option>Q4 2025 vs Q4 2024</option>
+      <option>Last 12 months</option>
+      <option>Since CJA go-live (Jul 2025 – Dec 2025)</option>
+    </select>
+
+    <div style="text-align:center;">
+      <button onclick="generateDeck()">Generate 5-Slide Executive Deck</button>
+    </div>
+
+    <div id="preview" class="preview" style="display:none;">
+      <h2 style="color:#D71A21;text-align:center;">Your deck is ready!</h2>
+      <p><strong>Slide 1 – The Big Picture:</strong> “Here’s how much revenue we can now see end-to-end with Customer Journey Analytics”</p>
+      <p><strong>Slide 2 – The Breakthrough:</strong> “CJA finally connects web, app, call-center and CRM – no more silos”</p>
+      <p><strong>Slide 3 – The Money Slide:</strong> “Top 3 opportunities that will move <span id="prevKpi"></span> the most”</p>
+      <p><strong>Slide 4 – Proof Points:</strong> Real CJA screenshots + plain-English wins</p>
+      <p><strong>Slide 5 – Next Steps & Investment:</strong> Clear 90-day roadmap and expected ROI</p>
+      <br>
+      <div style="text-align:center;">
+        <button class="download" onclick="downloadPDF()">Download Full 5-Slide PDF Deck</button>
+        <button onclick="mailto:analytics.acceleration@publicissapient.com?subject=CJA Executive Deck Request – {{brand}}&body=Please run the full version on our live CJA instance.">Request Live Version on Our Data</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Publicis Sapient – Analytics Acceleration Platform | Zero Adobe APIs required for this prototype<br>
+    Contact the Acceleration team: analytics.acceleration@publicissapient.com
+  </footer>
+
+  <script>
+    function generateDeck() {
+      const brand = document.getElementById('brand').value || "Your Brand";
+      const goal = document.getElementById('goal').value;
+      const kpi = document.getElementById('kpi').value;
+      const period = document.getElementById('period').value;
+
+      document.getElementById('prevKpi').textContent = kpi;
+      document.getElementById('preview').style.display = 'block';
+      window.deckData = {brand, goal, kpi, period};
+    }
+
+    function downloadPDF() {
+      if (!window.deckData) return alert("Generate the deck first");
+      const {jsPDF} = window.jspdf;
+      const doc = new jsPDF({orientation:"landscape", unit:"mm", format:"a4"});
+      const {brand, goal, kpi, period} = window.deckData;
+
+      const addSlide = (title, content) => {
+        doc.setFillColor(215,26,33); doc.rect(0,0,297,30,'F');
+        doc.setTextColor(255,255,255); doc.setFontSize(28); doc.text("Publicis Sapient", 15, 20);
+        doc.setFontSize(36); doc.text(title, 148.5, 100, {align:"center"});
+        doc.setTextColor(0); doc.setFontSize(18); doc.text(content, 148.5, 140, {align:"center", maxWidth: 240});
+        doc.setFontSize(14); doc.text(`Client: ${brand} | ${period}`, 148.5, 180, {align:"center"});
+        if (doc.getNumberOfPages() > 1) doc.addPage();
+      };
+
+      doc.setFillColor(215,26,33); doc.rect(0,0,297,210,'F');
+      doc.setTextColor(255); doc.setFontSize(48); doc.text("Publicis Sapient", 148.5, 80, {align:"center"});
+      doc.setFontSize(36); doc.text("Customer Journey Analytics", 148.5, 110, {align:"center"});
+      doc.setFontSize(28); doc.text("Executive Storyboard", 148.5, 140, {align:"center"});
+      doc.setFontSize(22); doc.text(`${brand}`, 148.5, 170, {align:"center"});
+
+      addSlide("The Big Picture", `With CJA we now see the full customer journey across every touchpoint – something Adobe Analytics alone could never do.`);
+      addSlide("The Breakthrough", `CJA stitches web, mobile app, call-center, email, and CRM data into one unified profile. No more guessing what happened between channels.`);
+      addSlide("The Money Slide", `Top 3 opportunities that will move ${kpi} the fastest:\n1. Personalised re-engagement → +18%\n2. Cross-sell at key moments → +14%\n3. Smarter media re-allocation → +22% ROAS`);
+      addSlide("Proof in 90 Days", `Live CJA examples already showing double-digit lifts for similar clients.\nFull activation roadmap delivered in next 30 days.`);
+      addSlide("Next Steps", `90-day plan:\n• Complete identity stitching\n• Build 5 high-value audiences\n• Activate across Meta, Google, Email\nExpected ${kpi} impact: +12-28% in first year`);
+
+      for(let i=1;i<=doc.getNumberOfPages();i++){
+        doc.setPage(i);
+        doc.setFontSize(10); doc.setTextColor(150);
+        doc.text("Publicis Sapient – Confidential", 15, 205);
+        doc.text(`Page ${i} of ${doc.getNumberOfPages()}`, 270, 205);
+      }
+
+      doc.save(`CJA-Executive-Storyboard-${brand.replace(/ /g,'-')}.pdf`);
+    }
+  </script>
+</body>
+</html>
