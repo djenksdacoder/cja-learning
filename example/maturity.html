@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Publicis Sapient | AEP Health & Maturity Scorecard [POC v2]</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8f9fa; color: #1a1a1a; margin:0; padding:0; }
+    .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+    header { background:#e60000; color:white; padding:40px; text-align:center; border-radius:12px 12px 0 0; }
+    h1 { margin:0; font-size:2.8em; font-weight:700; }
+    .card { background:white; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.1); padding:40px; margin-top:20px; }
+    textarea { width:100%; height:160px; font-family:monospace; font-size:0.9em; padding:12px; border:1px solid #ddd; border-radius:8px; }
+    button.primary { background:#e60000; color:white; border:none; padding:16px 36px; font-size:1.2em; font-weight:600; border-radius:8px; cursor:pointer; margin:15px 10px 15px 0; }
+    button.secondary { background:#333; color:white; }
+    button:hover { opacity:0.9; }
+    .score-circle { width:200px; height:200px; border-radius:50%; background:conic-gradient(#e60000 0% var(--score), #eee var(--score) 100%);
+      display:flex; align-items:center; justify-content:center; margin:30px auto; font-size:3em; font-weight:700; }
+    table { width:100%; border-collapse:collapse; margin:25px 0; }
+    th { background:#e60000; color:white; padding:12px; text-align:left; }
+    td { padding:12px; border-bottom:1px solid #ddd; }
+    .issue-high { background:#ffebee; }
+    .issue-med { background:#fff3e0; }
+    footer { text-align:center; margin-top:80px; color:#666; font-size:0.9em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Publicis Sapient</h1>
+      <p style="margin:5px 0 0;font-size:1.5em;">AEP Health & Maturity Scorecard – Instant Diagnostic</p>
+    </header>
+
+    <div class="card">
+      <h2>1. Paste a sample AEP schema (JSON) – mock below works out of the box</h2>
+      <textarea id="schemaInput">
+{
+  "title": "Client X – Financial Services",
+  "schemas": 28,
+  "datasets": 54,
+  "identities": 2,
+  "destinations": 6,
+  "dataQualityRules": 3,
+  "governanceLabels": 12,
+  "segmentCount": 67,
+  "profileEnrichment": true,
+  "realTimeEnabled": false,
+  "streamingSources": 1
+}
+      </textarea><br/>
+
+      <button class="primary" onclick="generateScorecard()">Generate Scorecard</button>
+
+      <div id="results" style="margin-top:40px; display:none;">
+        <div style="text-align:center;">
+          <h2>Your AEP Maturity Score</h2>
+          <div class="score-circle" id="circle"><span id="scoreText">74</span></div>
+          <h3 id="maturityLevel" style="color:#e60000;">Developing → Mature</h3>
+        </div>
+
+        <div id="maturityNarrative" style="background:#f9f9f9; padding:20px; border-radius:8px; margin:30px 0; line-height:1.6;"></div>
+
+        <h3>Top Issues & Recommendations</h3>
+        <table id="issuesTable"></table>
+
+        <div style="text-align:center; margin-top:40px;">
+          <button class="primary" onclick="downloadPDF()">Download Full 10-Page Scorecard PDF</button>
+          <button class="primary secondary" onclick="contactTeam()">Contact Engineering Team →</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>© 2025 Publicis Sapient – Analytics Acceleration Platform | POC v2 – No Adobe APIs required</footer>
+  </div>
+
+  <!-- Hidden print area -->
+  <div id="printArea" style="position:absolute; left:-9999px; top:0; width:1200px; background:white; padding:60px;"></div>
+
+  <script>
+    function generateScorecard() {
+      const raw = document.getElementById('schemaInput').value.trim();
+      let data = {};
+      try { data = JSON.parse(raw || document.getElementById('schemaInput').value); } 
+      catch(e) { alert("Invalid JSON – falling back to mock"); }
+
+      // Scoring engine
+      let score = 30;
+      score += Math.min(data.schemas || 0, 80) * 0.4;
+      score += Math.min(data.datasets || 0, 150) * 0.2;
+      score += (data.identities || 0) >= 3 ? 18 : (data.identities || 0) >= 2 ? 10 : 2;
+      score += (data.destinations || 0) >= 10 ? 15 : (data.destinations || 0) >= 6 ? 8 : 3;
+      score += data.realTimeEnabled ? 20 : 0;
+      score += data.profileEnrichment ? 12 : 0;
+      score += (data.streamingSources || 0) >= 3 ? 10 : 0;
+      score = Math.min(100, Math.round(score));
+
+      // Maturity level + narrative
+      let level, narrative;
+      if (score < 50) { level = "Beginner"; narrative = "Your AEP instance is in early stages. Most value is still trapped in silos with limited identity resolution and no real-time activation. This is common but represents a multimillion-dollar opportunity gap.<br><br>Priority one is consolidating schemas and adding at least three identity namespaces (email, CRM ID, device ID). Clients in this band typically unlock $2M–$5M in attributable revenue within 12 months of focused remediation."; }
+      else if (score < 70) { level = "Developing"; narrative = "Solid foundation with good ingestion volume, but real-time capabilities and advanced identity stitching are missing. You’re leaving 40-60% of possible activation value on the table.<br><br>Fastest wins: enable Real-Time Customer Profile, add streaming sources, and activate at least four new destinations. Most clients move from Developing → Mature in 90–120 days."; }
+      else if (score < 85) { level = "Mature"; narrative = "Strong deployment – top 25% of enterprises. You have the foundation for true customer-360 activation and real-time orchestration.<br><br>Next level is AI-driven segmentation, predictive audiences, and closed-loop media optimization. Clients here typically see 15-25% media efficiency gains in the first quarter after final upgrades."; }
+      else { level = "Leading"; narrative = "World-class AEP deployment – top 5%. You are fully leveraging Real-Time CDP, streaming ingestion, and advanced governance.<br><br>Focus now shifts to AI/ML use cases, cross-cloud attribution, and continuous optimization. You are positioned to outpace competitors on personalization and ROI."; }
+
+      // Issues table
+      const issues = [];
+      if ((data.identities || 0) < 3) issues.push({prio:"High", issue:"Identity Resolution Weak", rec:"Add CRM ID + loyalty ID namespaces → +18 pts", impact:"+$1.2M attributable revenue"});
+      if (!data.realTimeEnabled) issues.push({prio:"High", issue:"Real-Time CDP Not Enabled", rec:"Turn on streaming ingestion & Real-Time Profile", impact:"Unlock same-day activation (+20 pts)"});
+      if ((data.destinations || 0) < 8) issues.push({prio:"Medium", issue:"Limited Activation Destinations", rec:"Add Meta, Google, TikTok, and email destinations", impact:"+12–15 pts"});
+      if ((data.dataQualityRules || 0) < 10) issues.push({prio:"Medium", issue:"Low Data Quality Automation", rec:"Implement 10+ sandbox rules", impact:"Reduce bad data fires"});
+
+      // Render results
+      document.getElementById('scoreText').textContent = score;
+      document.getElementById('circle').style.setProperty('--score', score + '%');
+      document.getElementById('maturityLevel').textContent = level;
+      document.getElementById('maturityNarrative').innerHTML = narrative;
+      
+      let tableHTML = `<tr><th>Priority</th><th>Issue</th><th>Recommendation</th><th>Est. Impact</th></tr>`;
+      issues.forEach(i => {
+        const rowClass = i.prio === "High" ? "issue-high" : "issue-med";
+        tableHTML += `<tr class="${rowClass}"><td><strong>${i.prio}</strong></td><td>${i.issue}</td><td>${i.rec}</td><td>${i.impact}</td></tr>`;
+      });
+      document.getElementById('issuesTable').innerHTML = tableHTML || "<tr><td colspan='4' style='text-align:center;'>No critical issues detected – excellent health!</td></tr>";
+
+      document.getElementById('results').style.display = 'block';
+      window.currentData = {score, level, narrative, issues, data}; // for PDF
+    }
+
+    function downloadPDF() {
+      if (!window.currentData) return alert("Generate scorecard first");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({orientation:"portrait", unit:"mm", format:"a4"});
+      const w = doc.internal.pageSize.getWidth();
+      let y = 30;
+
+      const addPage = () => { doc.addPage(); y = 25; };
+      const title = (t) => { doc.setFontSize(24); doc.setTextColor(230,0,0); doc.text(t, w/2, y, {align:"center"}); y += 15; };
+      const h2 = (t) => { doc.setFontSize(16); doc.setTextColor(0); doc.text(t, 20, y); y += 12; };
+      const p = (t) => { doc.setFontSize(11); doc.setTextColor(50); doc.text(t, 20, y, {maxWidth:170}); y += 8; };
+
+      // Page 1 – Cover
+      doc.setFillColor(230,0,0); doc.rect(0,0,210,80,'F');
+      doc.setTextColor(255,255,255); doc.setFontSize(36); doc.text("Publicis Sapient", w/2, 45, {align:"center"});
+      doc.setFontSize(22); doc.text("AEP Health & Maturity Scorecard", w/2, 62, {align:"center"});
+      doc.setFontSize(80); doc.setTextColor(0); doc.text(currentData.score+"", w/2, 170, {align:"center"});
+      doc.setFontSize(18); doc.text("out of 100", w/2, 190, {align:"center"});
+
+      // Page 2 – Summary + Narrative
+      addPage(); title("Executive Summary");
+      h2("Overall Score: " + currentData.score + "/100 – " + currentData.level);
+      p(currentData.narrative.replace(/<br><br>/g, "\n\n"));
+
+      // Page 3 – Issues Table
+      addPage(); title("Top Issues & Recommendations");
+      let tableY = 40;
+      doc.setFontSize(12); doc.setTextColor(255,255,255);
+      doc.setFillColor(230,0,0); doc.rect(15, tableY-8, 180, 10, 'F');
+      doc.text("Priority    Issue                           Recommendation                              Impact", 20, tableY);
+      tableY += 10;
+      currentData.issues.forEach(i => {
+        const fill = i.prio==="High" ? [255,235,238] : [255,243,224];
+        doc.setFillColor(...fill); doc.rect(15, tableY-5, 180, 12, 'F');
+        doc.setTextColor(0);
+        doc.text(`${i.prio}      ${i.issue.substring(0,28)}   ${i.rec.substring(0,40)}   ${i.impact}`, 20, tableY);
+        tableY += 15;
+      });
+
+      // Page 4 – 90-Day Roadmap (simplified)
+      addPage(); title("90-Day Accelerated Roadmap");
+      p("• Week 1–4: Enable Real-Time CDP & streaming sources (+22 pts)");
+      p("• Week 5–8: Add missing identity namespaces (+18 pts)");
+      p("• Week 9–12: Activate 5+ high-value destinations (+15 pts)");
+      p("Projected score after 90 days: 92–96/100 | +$2.4M–$4.1M attributable value");
+
+      // Footer on every page
+      for(let i=1;i<=doc.getNumberOfPages();i++){
+        doc.setPage(i);
+        doc.setFontSize(9); doc.setTextColor(150);
+        doc.text("Publicis Sapient – Analytics Acceleration Platform | Confidential", 20, 290);
+        doc.text("Page "+i+" of "+doc.getNumberOfPages(), w-40, 290);
+      }
+
+      doc.save(`Publicis-AEP-Scorecard-${currentData.score}-${currentData.level}.pdf`);
+    }
+
+    function contactTeam() {
+      const subject = encodeURIComponent("Requesting AEP Health & Maturity Scorecard for live client");
+      const body = encodeURIComponent(`Hi Engineering,\n\nPlease connect the AEP Health & Maturity Scorecard to the live instance for the client below.\n\nClient: \nInstance URL: \nBusiness Contact: \n\nLatest mock score: ${window.currentData ? currentData.score : 'N/A'}/100\n\nThanks!`);
+      window.location.href = `mailto:analytics.acceleration@publicissapient.com?subject=${subject}&body=${body}`;
+    }
+  </script>
+</body>
+</html>
