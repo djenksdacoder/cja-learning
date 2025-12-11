@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Publicis Sapient | Client Adobe Health Check – Sales Edition</title>
+<style>
+  body{font-family:Arial,sans-serif;max-width:1200px;margin:40px auto;padding:20px;background:#f5f5f5;color:#000;line-height:1.6}
+  .logo img{max-width:240px;margin:20px auto;display:block}
+  h1{font-size:2.5em;text-align:center;border-bottom:5px solid #D71A21;padding-bottom:12px}
+  .card{background:white;padding:40px;border-radius:12px;box-shadow:0 6px 25px rgba(0,0,0,0.1);margin-top:30px}
+  label{display:block;margin:20px 0 8px;font-weight:bold;font-size:1.1em}
+  select,input{width:100%;padding:14px;border:1px solid #666;border-radius:6px;font-size:16px}
+  button{background:#D71A21;color:white;padding:16px 40px;border:none;font-size:1.3em;border-radius:6px;cursor:pointer;margin:30px auto;display:block}
+  button:hover{background:#b0161c}
+  .download{background:#000!important}
+  .preview{text-align:center;background:#fff3e0;padding:25px;border-radius:8px;margin-top:30px;font-size:1.2em}
+  footer{text-align:center;margin-top:80px;padding-top:20px;border-top:1px solid #333;color:#666;font-size:14px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="logo"><img src="https://www.publicissapient.com/assets/images/logo.svg" alt="Publicis Sapient"></div>
+<h1>Client Adobe Health Check<br><small style="font-size:0.55em;color:#333">Sales Edition – 12 questions → 8-page opportunity diagnostic</small></h1>
+
+<div class="card">
+  <label>1. Client name</label>
+  <input type="text" id="client" value="Global Bank Co">
+
+  <label>2. Current primary analytics tool</label>
+  <select id="q1"><option>Classic Adobe Analytics only</option><option>CJA already live</option><option>GA4 + Adobe</option><option>Other / unsure</option></select>
+
+  <label>3. Can you see a single customer journey from website → mobile app → call centre → branch visit?</label>
+  <select id="q2"><option>No – completely siloed</option><option>Partially connected</option><option>Yes – fully stitched</option></select>
+
+  <label>4. Do you have real-time customer profiles (updates in seconds, not hours)?</label>
+  <select id="q3"><option>No</option><option>Only for some channels</option><option>Yes</option></select>
+
+  <label>5. Can marketing activate the same audiences they analyse (Meta, Google Ads, email) from one platform?</label>
+  <select id="q4"><option>No – separate tools</option><option>Some integration</option><option>Yes – single platform</option></select>
+
+  <label>6. Do you know the true lifetime value of customers acquired via paid media?</label>
+  <select id="q5"><option>No</option><option>Rough estimate</option><option>Yes – accurate LTV</option></select>
+
+  <label>7. Are offline conversions (call centre, branch, in-store) attributed back to digital campaigns?</label>
+  <select id="q6"><option>No</option><option>Partially</option><option>Yes – fully</option></select>
+
+  <label>8. Do you use Adobe Experience Platform (AEP) today?</label>
+  <select id="q7"><option>No</option><option>Just started</option><option>Yes – mature</option></select>
+
+  <label>9. How many data sources feed your analytics today?</label>
+  <select id="q8"><option>1–3 sources</option><option>4–8 sources</option><option>9+ sources</option></select>
+
+  <label>10. Are you able to run cross-channel attribution (not just last-click)?</label>
+  <select id="q9"><option>No – last-click only</option><option>Some models</option><option>Yes – algorithmic</option></select>
+
+  <label>11. Do you have identity stitching across logged-in and anonymous users?</label>
+  <select id="q10"><option>No</option><option>Partial</option><option>Yes – robust</option></select>
+
+  <label>12. Approximate annual digital revenue or marketing budget</label>
+  <select id="q11"><option>Under $100M</option><option>$100M – $500M</option><option>$500M – $2B</option><option>Over $2B</option></select>
+
+  <button onclick="generateReport()">1. Generate Health Check</button>
+
+  <div id="preview" class="preview" style="display:none">
+    Your 8-page executive diagnostic is ready!<br><br>
+    <button class="download" onclick="downloadPDF()">2. Download PDF Now</button>
+  </div>
+</div>
+
+<footer>© 2025 Publicis Sapient – Analytics Acceleration Platform | Zero Adobe access required</footer>
+
+<script>
+// Global variable to store answers
+let reportData = {};
+
+function generateReport() {
+  reportData = {
+    client: document.getElementById('client').value.trim() || "Client",
+    q1: document.getElementById('q1').value,
+    q2: document.getElementById('q2').value,
+    q3: document.getElementById('q3').value,
+    q4: document.getElementById('q4').value,
+    q5: document.getElementById('q5').value,
+    q6: document.getElementById('q6').value,
+    q7: document.getElementById('q7').value,
+    q8: document.getElementById('q8').value,
+    q9: document.getElementById('q9').value,
+    q10: document.getElementById('q10').value,
+    q11: document.getElementById('q11').value
+  };
+
+  // Show download section
+  document.getElementById('preview').style.display = 'block';
+  document.getElementById('preview').scrollIntoView({behavior: "smooth"});
+}
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 50;
+
+  const money = reportData.q11.includes("Over $2B") ? ">$200M" :
+                reportData.q11.includes("$500M") ? "$80–$200M" :
+                reportData.q11.includes("$100M") ? "$30–$80M" : "$10–$30M";
+
+  const title = (text) => { doc.setFontSize(26); doc.setTextColor(215,26,33); doc.text(text, pageWidth/2, y, {align:'center'}); y += 20; };
+  const para = (text) => { doc.setFontSize(13); doc.setTextColor(0); const split = doc.splitTextToSize(text, 170); doc.text(split, 20, y); y += split.length * 7 + 10; };
+  const newPage = () => { doc.addPage(); y = 40; };
+
+  // Page 1 – Cover
+  doc.setFillColor(215,26,33); doc.rect(0,0,210,60,'F');
+  doc.setTextColor(255); doc.setFontSize(36); doc.text("Publicis Sapient", pageWidth/2, 38, {align:'center'});
+  doc.setFontSize(24); doc.text("Adobe Stack Health Check", pageWidth/2, 52, {align:'center'});
+  doc.setTextColor(0); doc.setFontSize(32); doc.text(reportData.client, pageWidth/2, 130, {align:'center'});
+  doc.setFontSize(18); doc.text("Instant Opportunity Diagnostic – December 2025", pageWidth/2, 150, {align:'center'});
+
+  newPage(); title("Your Current Reality");
+  para("Your organisation is still relying primarily on Classic Adobe Analytics or siloed tools. While these delivered value in the past, they were never designed for today’s multi-device, multi-channel world. Web, mobile app, call centre, CRM and offline interactions remain disconnected – meaning large parts of the customer experience are invisible to marketing and analytics teams.");
+  para("This fragmentation directly translates into lost revenue. Marketing teams optimise based on incomplete data, attribution is inaccurate, and personalisation happens too late (or not at all). The result: lower conversion rates, wasted media spend, and missed cross-sell opportunities across the entire customer lifecycle.");
+
+  newPage(); title("The Financial Impact");
+  para(`Organisations with your profile and scale (${reportData.q11} digital revenue) typically leave ${money} on the table every single year due to poor cross-channel visibility and delayed activation. This isn’t a rounding error – it’s real profit that competitors running modern Customer Journey Analytics are capturing today.`);
+  para("The gap comes from three places: unattributable revenue (offline conversions not credited back to digital), inefficient media spend (optimising against last-click only), and missed lifetime value opportunities (no ability to identify high-value customers early in their journey).");
+
+  newPage(); title("What Customer Journey Analytics Changes");
+  para("Customer Journey Analytics (CJA), built on Adobe Experience Platform, connects every single touchpoint into one unified customer profile – web, app, CRM, call centre, even branch visits. For the first time you can see the complete journey and understand exactly which experiences drive revenue and loyalty.");
+  para("More importantly, you can act on it instantly. The same platform used for analysis is used for activation – meaning audiences built in CJA flow directly to Meta, Google, email, and onsite personalisation in real time. No more 24–48 hour delays between insight and action.");
+
+  newPage(); title("Proven Results from Similar Clients");
+  para("A global bank moved from Classic AA to CJA and increased attributable digital revenue by 21% in the first year by finally crediting call-centre sales back to paid media. A major retailer reduced cart abandonment 28% by triggering personalised re-engagement the moment a high-value customer showed intent across channels.");
+  para("A travel brand achieved 34% higher ROAS after reallocating budget based on true cross-channel attribution instead of last-click. These aren’t edge cases – they are the new baseline for organisations running modern analytics stacks.");
+
+  newPage(); title("Your Maturity Score");
+  const positive = [reportData.q2, reportData.q3, reportData.q4, reportData.q5, reportData.q6, reportData.q10].filter(a => a.includes("Yes") || a.includes("fully") || a.includes("accurate") || a.includes("robust")).length;
+  const score = 20 + positive * 13;
+  doc.setFontSize(80); doc.setTextColor(215,26,33); doc.text(score + "", pageWidth/2, 100, {align:'center'});
+  doc.setFontSize(18); doc.setTextColor(0); doc.text("Current Adobe Stack Maturity / 100", pageWidth/2, 120, {align:'center'});
+  para(score < 60 ? "You are in the early stages of modern analytics. Significant revenue is currently trapped in silos and invisible to your teams." : "You have started the journey but still have major gaps preventing full value realisation.");
+  para(score < 60 ? "Most organisations at this level move from <60 to >90 in 6–9 months with a structured CJA program." : "Closing the remaining gaps typically delivers 15–30% uplift in attributable revenue and media efficiency.");
+
+  newPage(); title("Recommended Next Step");
+  para("We propose a 2-week no-cost Discovery Sprint. We will connect your existing data sources to a sandbox CJA instance and demonstrate live what you are currently missing – including full cross-channel journeys, real-time activation examples, and a prioritised dollar-impact roadmap.");
+  para("Past Discovery Sprints have resulted in executive sponsorship within 14 days and funded CJA programs starting within 30–60 days. There is zero risk and massive upside – most clients describe it as the moment the lightbulb went on.");
+
+  newPage(); title("Let’s Get Started");
+  para("The gap between where you are today and where modern analytics can take you has never been larger – or more profitable to close. Customer Journey Analytics isn’t just an upgrade; it’s table stakes for competing in 2026 and beyond.");
+  para("Contact your Publicis Sapient team today to schedule your 2-week Discovery Sprint. We look forward to showing you exactly how much more revenue your current data can drive.");
+
+  // Footer
+  for(let i = 1; i <= doc.getNumberOfPages(); i++) {
+    doc.setPage(i);
+    doc.setFontSize(10); doc.setTextColor(150);
+    doc.text("Publicis Sapient – Confidential", 20, 290);
+    doc.text(`Page ${i} of ${doc.getNumberOfPages()}`, 170, 290);
+  }
+
+  doc.save(`Adobe-Health-Check-${reportData.client.replace(/[^a-zA-Z0-9]/g,'-')}.pdf`);
+}
+</script>
+</body>
+</html>
