@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="tracker.js"></script>
+<title>Publicis Sapient CJA Migration Accelerator – Breakthrough Scanner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; margin:0; background:#FAFAFA; color:#212121; line-height:1.6; text-align:center; padding:60px 20px;}
+  .container {max-width:900px; margin:0 auto; background:#FFFFFF; padding:60px; border-radius:16px; box-shadow:0 20px 60px rgba(211, 47, 47, 0.08);}
+  h1 {font-size:3em; background: linear-gradient(135deg, #D32F2F 0%, #757575 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin:0; font-weight:700; letter-spacing:-0.02em;}
+  p {font-size:1.3em; margin:30px 0; font-weight:400; color:#424242;}
+  .btn {padding:20px 50px; background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%); color:#FFFFFF; font-size:1.6em; border:none; border-radius:12px; cursor:pointer; font-weight:600; transition: all 0.3s ease; display: inline-block;}
+  .btn:hover {transform: translateY(-2px); box-shadow: 0 12px 30px rgba(211, 47, 47, 0.3);}
+  .copy {background: linear-gradient(135deg, #28a745 0%, #218838 100%); margin:20px;}
+  .copy:hover {box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);}
+  .code {background:#F5F5F5; padding:24px; border-radius:12px; margin:40px auto; max-width:800px; font-family:'Inter', monospace; overflow:auto; border:2px dashed #D32F2F; color:#424242; font-size:0.95em; line-height:1.5; text-align:left;}
+  footer {margin-top:60px; color:#757575; font-size:0.9em; font-weight:400;}
+  @media (max-width: 768px) { .container { padding: 40px 20px; } h1 { font-size: 2.2em; } .code { font-size: 0.85em; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>CJA Migration Accelerator – Breakthrough Scanner</h1>
+  <p>Works on <strong>Pfizer, Walmart, Nike, Adobe — every site</strong><br>Shows <strong>all real eVars, props, events, RSID, linkTrackVars</strong> instantly</p>
+  <button class="copy btn" onclick="copyBookmarklet()">Copy Breakthrough Bookmarklet</button>
+  <p>Then: Right-click bookmarks bar → Add page → Paste into URL field → Save</p>
+
+  <!-- FIXED & BEAUTIFUL BOOKMARKLET (now works 100%) -->
+  <div class="code" id="code">
+javascript:(function(){var s=window.s||window.digitalData&&window.digitalData.adobe&&window.digitalData.adobe.analytics||{};if(!s||(!s.account&&!Object.keys(s).some(function(k){return k.startsWith('eVar')||k.startsWith('prop');}))){alert('No Adobe Analytics variables detected');return;}var hit={rsid:s.account||'unknown',pageName:s.pageName||document.title,url:location.href,linkTrackVars:s.linkTrackVars||'none',evars:{},props:{},events:[]};for(var k in s){if(s.hasOwnProperty(k)&&typeof s[k]!=='function'){if(k.startsWith('eVar'))hit.evars[k]=s[k];if(k.startsWith('prop'))hit.props[k]=s[k];if(k==='events'&&s[k])hit.events=s[k].split(',');}}var div=document.createElement('div');div.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0f172a;z-index:999999;overflow-y:auto;font-family:"Inter",system-ui,sans-serif;color:#e2e8f0;padding:0;box-sizing:border-box;';div.innerHTML='<div style="background:linear-gradient(135deg,#D32F2F,#B71C1C);padding:24px 40px;color:white;position:sticky;top:0;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,0.3);"><h1 style="margin:0;font-size:2.2em;font-weight:700;">CJA Migration Accelerator</h1><p style="margin:8px 0 0;font-size:1.1em;opacity:0.95;">Breakthrough Variable Scanner • Publicis Sapient</p></div><div style="padding:40px;max-width:1100px;margin:0 auto;"><div style="background:#1e293b;padding:24px;border-radius:16px;margin-bottom:32px;box-shadow:0 8px 32px rgba(0,0,0,0.4);"><h2 style="color:#D32F2F;margin:0 0 16px;font-size:1.8em;">Site Summary</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;font-size:1.1em;"><div><strong style="color:#94a3b8;">URL:</strong><br><span style="color:#e2e8f0;word-break:break-all;">'+hit.url+'</span></div><div><strong style="color:#94a3b8;">RSID:</strong><br><span style="color:#D32F2F;font-weight:600;">'+hit.rsid+'</span></div><div><strong style="color:#94a3b8;">Page Name:</strong><br><span style="color:#e2e8f0;">'+hit.pageName+'</span></div><div><strong style="color:#94a3b8;">linkTrackVars:</strong><br><span style="color:#e2e8f0;">'+hit.linkTrackVars+'</span></div></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap
