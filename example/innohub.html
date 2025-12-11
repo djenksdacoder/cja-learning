@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analytics Acceleration Hub | Publicis Sapient</title>
+
+<!-- Publicis Sapient official fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Public+Serif:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ps-red: #E4002B;
+    --ps-dark: #000000;
+    --ps-gray: #666666;
+    --ps-light: #F5F5F5;
+  }
+  body {
+    margin:0; padding:0; background:#fff; color:#000;
+    font-family:'Public Sans', Arial, sans-serif; line-height:1.6;
+  }
+  .logo img {height:48px; margin:40px auto 20px; display:block;}
+  
+  /* Hero – exactly like publicissapient.com */
+  .hero {
+    position:relative; height:55vh; min-height:500px;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.4)), url('https://www.publicissapient.com/content/dam/ps-reinvent/us/en/2025/08/home/images/00-poster-3072x1064-desktop.jpg') center/cover no-repeat;
+    display:flex; align-items:center; justify-content:center; text-align:center; color:white;
+  }
+  .hero-content {max-width:900px; padding:40px;}
+  .hero h1 {font-family:'Public Serif', serif; font-size:4.5em; margin:0 0 20px; line-height:1.1;}
+  .hero p {font-size:1.4em; margin:0 0 30px; opacity:0.95;}
+  
+  .container {max-width:1400px; margin:0 auto; padding:80px 40px;}
+  h2.category-title {
+    font-family:'Public Serif', serif; font-size:2.8em; color:var(--ps-red); text-align:center; margin-bottom:60px;
+  }
+  
+  .grid {
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(360px,1fr)); gap:40px;
+  }
+  .card {
+    background:white; border-radius:8px; overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.1); transition:all 0.4s cubic-bezier(0.25,0.8,0.25,1);
+  }
+  .card:hover {transform:translateY(-12px); box-shadow:0 20px 40px rgba(0,0,0,0.15);}
+  .card-header {
+    background:var(--ps-red); color:white; padding:28px 24px 20px;
+  }
+  .card-header h3 {margin:0; font-size:1.5em; font-weight:600;}
+  .card-body {padding:28px 24px; min-height:140px;}
+  .card-body p {margin:0; color:#333; font-size:1.05em;}
+  .card-footer a {
+    display:block; background:var(--ps-dark); color:white; text-align:center;
+    padding:18px; font-weight:600; text-decoration:none; transition:background 0.3s;
+  }
+  .card-footer a:hover {background:#222;}
+  
+  .coming-soon {
+    opacity:0.7; position:relative;
+  }
+  .coming-soon::after {
+    content:"Launching Q1 2026"; position:absolute; top:12px; right:12px;
+    background:#000; color:white; padding:4px 10px; border-radius:4px; font-size:0.8em;
+  }
+  
+  .cta-section {
+    background:var(--ps-red); color:white; padding:100px 40px; text-align:center;
+  }
+  .cta-section h2 {color:white; font-size:3.2em; margin-bottom:20px;}
+  .cta-section p {font-size:1.3em; max-width:800px; margin:0 auto 40px;}
+  .cta-button {
+    background:white; color:var(--ps-red); padding:20px 60px; border:none;
+    font-size:1.4em; font-weight:700; border-radius:50px; cursor:pointer; transition:0.3s;
+  }
+  .cta-button:hover {background:#f0f0f0; transform:scale(1.05);}
+  
+  footer {
+    background:#000; color:#aaa; padding:60px 40px; text-align:center; font-size:0.9em;
+  }
+  @media (max-width:768px) {
+    .hero h1 {font-size:3em;}
+    .hero {height:70vh;}
+  }
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/PS_Logo_RGB.svg/330px-PS_Logo_RGB.svg.png" alt="Publicis Sapient">
+</div>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1>Analytics<br>Acceleration Hub</h1>
+    <p>10 enterprise-grade accelerators that turn Adobe conversations into revenue — faster, smarter, at scale.</p>
+  </div>
+</div>
+
+<div class="container">
+  <h2 class="category-title">Discovery & Qualification</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="card-header"><h3>Client Adobe Health Check</h3></div>
+      <div class="card-body"><p>90-second diagnostic → 8-page executive PDF that creates instant CMO urgency and quantifies revenue left on the table.</p></div>
+      <div class="card-footer"><a href="health-check.html" target="_blank">Open Tool →</a></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Stakeholder Readiness Evaluator</h3></div>
+      <div class="card-body"><p>Identifies internal blockers before Day 1 — dramatically improves project success rates.</p></div>
+      <div class="card-footer"><a href="cjaindex.html" target="_blank">Open Tool →</a></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Survey Getting Started Page</h3></div>
+      <div class="card-body"><p>Self-service qualification — turns anonymous visitors into scored, sales-ready leads.</p></div>
+      <div class="card-footer"><a href="survey.html" target="_blank">Open Tool →</a></div>
+    </div>
+  </div>
+
+  <h2 class="category-title">Migration & Launch</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="card-header"><h3>CJA Launch Kit + AA → CJA Migration</h3></div>
+      <div class="card-body"><p>Full migration kit, schema generator, data prep — our #1 service now productised at 90% margin.</p></div>
+      <div class="card-footer"><a href="cja-tool-kit.html" target="_blank">Open Tool →</a></div>
+    </div>
+    <div class="card coming-soon">
+      <div class="card-header"><h3>30 Day Automated Plan</h3></div>
+      <div class="card-body"><p>Personalised Day-1 to Day-30 success plan — 100% attach-rate add-on.</p></div>
+      <div class="card-footer"><a href="#">Coming Q1 2026 →</a></div>
+    </div>
+  </div>
+
+  <h2 class="category-title">Diagnostics & Scoring</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="card-header"><h3>CJA Breakthrough Scanner</h3></div>
+      <div class="card-body"><p>Live CJA instance scan → instant multimillion-dollar activation roadmap.</p></div>
+      <div class="card-footer"><a href="all-scan.html" target="_blank">Open Tool →</a></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>AA Schema Maturity Score Analyzer</h3></div>
+      <div class="card-body"><p>One-click legacy AA health check — perfect upsell trigger for CJA migrations.</p></div>
+      <div class="card-footer"><a href="maturity.html" target="_blank">Open Tool →</a></div>
+    </div>
+  </div>
+
+  <h2 class="category-title">Independent Tools</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="card-header"><h3>Independent Analytics Tracking Software</h3></div>
+      <div class="card-body"><p>Vendor-agnostic tracking generator — wins deals when Adobe isn’t the only option.</p></div>
+      <div class="card-footer"><a href="tracker.html" target="_blank">Open Tool →</a></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Adobe Analytics Investigator Chrome Extension</h3></div>
+      <div class="card-body"><p>Free extension (10k+ downloads) — top-of-funnel brand awareness & lead capture.</p></div>
+      <div class="card-footer"><a href="https://chrome.google.com/webstore/detail/..." target="_blank">Chrome Web Store →</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2>Ready to accelerate your next Adobe deal?</h2>
+  <p>We turn discovery calls into funded CJA programs faster than anyone else.</p>
+  <button class="cta-button" onclick="location.href='mailto:analytics.acceleration@publicissapient.com?subject=Analytics Acceleration Hub – Request Demo'">Contact the Acceleration Team</button>
+</div>
+
+<footer>
+  © 2025 Publicis Sapient – All rights reserved<br>
+  Analytics Acceleration Hub • Built by the Global Adobe Practice
+</footer>
+
+</body>
+</html>
