@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Page Analytics Tracker Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #dashboard { margin-top: 40px; border-collapse: collapse; width: 100%; }
+        #dashboard th, #dashboard td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        #dashboard th { background-color: #f2f2f2; }
+        .export-btn { margin-top: 10px; padding: 5px 10px; background: #34a853; color: white; border: none; cursor: pointer; }
+        .export-btn:hover { background: #2d8e3e; }
+        .clear-btn { background: #ea4335; }
+        .status { color: green; font-weight: bold; }
+        .button-text { font-weight: bold; color: #4285f4; }
+        .page-file { font-style: italic; color: #666; } /* Subtle page indicator */
+    </style>
+</head>
+<body>
+    <h1>Multi-Page Scanner Analytics Dashboard</h1>
+    <p>Unified view from all pages (e.g., scanner.html, report.html). Refresh for live sync.</p>
+    <p id="status" class="status" style="display: none;">✅ Connected: Multi-Page Data Loaded</p>
+    
+    <div id="dashboard">
+        <h2>Event Log (Filter by Page Below)</h2>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Page File</th> <!-- NEW: For multi-page slicing -->
+                    <th>URL</th>
+                    <th>Referrer</th>
+                    <th>Timestamp</th>
+                    <th>Extra Data (incl. Button Text)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <button class="export-btn" onclick="exportData()">Export JSON</button>
+        <button class="export-btn clear-btn" onclick="clearData()">Clear All Data</button>
+    </div>
+
+    <script>
+        // === MULTI-PAGE TRACKER PAGE SCRIPT ===
+        const CONFIG = {
+            storageKey: 'scannerAnalyticsData' // Matches all snippets
+        };
+
+        let dataStore = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
+
+        function renderDashboard() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            if (dataStore.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6">No events—add snippet to pages & interact!</td></tr>';
+                return;
+            }
+            dataStore.reverse().forEach(event => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = event.type;
+                row.insertCell(1).innerHTML = `<span class="page-file">${event.pageFile || 'Unknown'}</span>`; // NEW: Page column
+                row.insertCell(2).textContent = event.url.split('/').pop() || event.url;
+                row.insertCell(3).textContent = event.referrer.split('/').pop() || 'Direct';
+                row.insertCell(4).textContent = new Date(event.timestamp).toLocaleString();
+                
+                // Enhanced extra: Skip page fields, highlight buttonText
+                const extraCell = row.insertCell(5);
+                const extras = Object.entries(event).filter(([k]) => !['type','url','referrer','timestamp','receivedAt','pageFile','pageUrl'].includes(k));
+                let extraHtml = extras.map(([k,v]) => {
+                    if (k === 'buttonText') return `<span class="button-text">${k}: "${v}"</span>`;
+                    return `${k}: ${v}`;
+                }).join(', ');
+                extraCell.innerHTML = extraHtml || 'N/A';
+            });
+            document.getElementById('status').style.display = 'block';
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(dataStore, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `multi-page-events-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearData() {
+            if (confirm('Clear data from all pages?')) {
+                localStorage.removeItem(CONFIG.storageKey);
+                dataStore = [];
+                renderDashboard();
+                document.getElementById('status').style.display = 'none';
+            }
+        }
+
+        // Auto-refresh every 5s for live multi-page view
+        setInterval(() => {
+            const newData = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
+            if (newData.length > dataStore.length) {
+                dataStore = newData;
+                renderDashboard();
+            }
+        }, 5000);
+
+        // Initial render
+        renderDashboard();
+    </script>
+</body>
+</html>
